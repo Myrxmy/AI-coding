@@ -1,4 +1,4 @@
-package com.myr.aicode.model.dto;
+package com.myr.aicode.model.dto.user;
 
 import lombok.Data;
 

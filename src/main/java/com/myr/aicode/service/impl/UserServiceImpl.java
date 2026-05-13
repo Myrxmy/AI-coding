@@ -8,7 +8,7 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.myr.aicode.exception.BusinessException;
 import com.myr.aicode.exception.ErrorCode;
 import com.myr.aicode.mapper.UserMapper;
-import com.myr.aicode.model.dto.UserQueryRequest;
+import com.myr.aicode.model.dto.user.UserQueryRequest;
 import com.myr.aicode.model.entity.User;
 import com.myr.aicode.model.enums.UserRoleEnum;
 import com.myr.aicode.model.vo.LoginUserVO;
