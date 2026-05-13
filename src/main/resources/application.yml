@@ -45,7 +45,7 @@ langchain4j:
   open-ai:
     chat-model:
       base-url: https://api.deepseek.com
-      api-key: sk-fdbe7006320745f4ad652bd398b280d9
+      api-key: 
       model-name: deepseek-chat
       #      strict-json-schema: true
       #      response-format: json_object
@@ -55,7 +55,7 @@ langchain4j:
       max-retries: 3
     streaming-chat-model:
       base-url: https://api.deepseek.com
-      api-key: sk-fdbe7006320745f4ad652bd398b280d9
+      api-key: 
       model-name: deepseek-chat
       max-tokens: 8192
       log-requests: true
@@ -63,7 +63,7 @@ langchain4j:
     # 推理 AI 模型配置（用于复杂的推理任务）
     reasoning-streaming-chat-model:
       base-url: https://api.deepseek.com
-      api-key: sk-fdbe7006320745f4ad652bd398b280d9
+      api-key: 
       model-name: deepseek-reasoner
       max-tokens: 32768
       temperature: 0.1
@@ -72,7 +72,7 @@ langchain4j:
     # 智能路由 AI 模型配置（用于简单的分类任务）
     routing-chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-      api-key: sk-814f02452e5c433292fc61a71a2fe25c
+      api-key: 
       model-name: qwen-turbo
       max-tokens: 100
       log-requests: true
@@ -81,10 +81,10 @@ langchain4j:
 
 # Pexels 图片搜索配置
 pexels:
-  api-key: uCKuTW7uyF3Rbm2PuH2iuVOEY22Z3GxQDW3KPTwl7aR9LvS9Ttmh5xUA
+  api-key: 
 # 阿里云 DashScope 配置
 dashscope:
-  api-key: sk-266102bbe35445c3893f7512004c2713
+  api-key: 
   image-model: wan2.2-t2i-flash
 # 监控
 management:
