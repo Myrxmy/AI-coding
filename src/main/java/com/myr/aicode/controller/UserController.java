@@ -10,7 +10,7 @@ import com.myr.aicode.constant.UserConstant;
 import com.myr.aicode.exception.BusinessException;
 import com.myr.aicode.exception.ErrorCode;
 import com.myr.aicode.exception.ThrowUtils;
-import com.myr.aicode.model.dto.*;
+import com.myr.aicode.model.dto.user.*;
 import com.myr.aicode.model.entity.User;
 import com.myr.aicode.model.vo.LoginUserVO;
 import com.myr.aicode.model.vo.UserVO;
