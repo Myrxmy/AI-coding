@@ -1,157 +1,88 @@
 <template>
-  <div id="userManagePage">
-    <!-- 搜索表单 -->
-    <a-form layout="inline" :model="searchParams" @finish="doSearch">
-      <a-form-item label="账号">
-        <a-input v-model:value="searchParams.userAccount" placeholder="输入账号" />
+  <div id="userLoginPage">
+    <h2 class="title">鱼皮 AI 应用生成 - 用户登录</h2>
+    <div class="desc">不写一行代码，生成完整应用</div>
+    <a-form :model="formState" name="basic" autocomplete="off" @finish="handleSubmit">
+      <a-form-item name="userAccount" :rules="[{ required: true, message: '请输入账号' }]">
+        <a-input v-model:value="formState.userAccount" placeholder="请输入账号" />
       </a-form-item>
-      <a-form-item label="用户名">
-        <a-input v-model:value="searchParams.userName" placeholder="输入用户名" />
+      <a-form-item
+        name="userPassword"
+        :rules="[
+          { required: true, message: '请输入密码' },
+          { min: 8, message: '密码长度不能小于 8 位' },
+        ]"
+      >
+        <a-input-password v-model:value="formState.userPassword" placeholder="请输入密码" />
       </a-form-item>
+      <div class="tips">
+        没有账号
+        <RouterLink to="/user/register">去注册</RouterLink>
+      </div>
       <a-form-item>
-        <a-button type="primary" html-type="submit">搜索</a-button>
+        <a-button type="primary" html-type="submit" style="width: 100%">登录</a-button>
       </a-form-item>
     </a-form>
-    <a-divider />
-    <!-- 表格 -->
-    <a-table
-      :columns="columns"
-      :data-source="data"
-      :pagination="pagination"
-      @change="doTableChange"
-    >
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'userAvatar'">
-          <a-image :src="record.userAvatar" :width="120" />
-        </template>
-        <template v-else-if="column.dataIndex === 'userRole'">
-          <div v-if="record.userRole === 'admin'">
-            <a-tag color="green">管理员</a-tag>
-          </div>
-          <div v-else>
-            <a-tag color="blue">普通用户</a-tag>
-          </div>
-        </template>
-        <template v-else-if="column.dataIndex === 'createTime'">
-          {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
-        </template>
-        <template v-else-if="column.key === 'action'">
-          <a-button danger @click="doDelete(record.id)">删除</a-button>
-        </template>
-      </template>
-    </a-table>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from 'vue'
-import { deleteUser, listUserVoByPage } from '@/api/userController.ts'
+import { reactive } from 'vue'
+import { userLogin } from '@/api/userController.ts'
+import { useLoginUserStore } from '@/stores/loginUser.ts'
+import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
-import dayjs from 'dayjs'
 
-const columns = [
-  {
-    title: 'id',
-    dataIndex: 'id',
-  },
-  {
-    title: '账号',
-    dataIndex: 'userAccount',
-  },
-  {
-    title: '用户名',
-    dataIndex: 'userName',
-  },
-  {
-    title: '头像',
-    dataIndex: 'userAvatar',
-  },
-  {
-    title: '简介',
-    dataIndex: 'userProfile',
-  },
-  {
-    title: '用户角色',
-    dataIndex: 'userRole',
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createTime',
-  },
-  {
-    title: '操作',
-    key: 'action',
-  },
-]
-
-// 展示的数据
-const data = ref<API.UserVO[]>([])
-const total = ref(0)
-
-// 搜索条件
-const searchParams = reactive<API.UserQueryRequest>({
-  pageNum: 1,
-  pageSize: 10,
+const formState = reactive<API.UserLoginRequest>({
+  userAccount: '',
+  userPassword: '',
 })
 
-// 获取数据
-const fetchData = async () => {
-  const res = await listUserVoByPage({
-    ...searchParams,
-  })
-  if (res.data.data) {
-    data.value = res.data.data.records ?? []
-    total.value = res.data.data.totalRow ?? 0
+const router = useRouter()
+const loginUserStore = useLoginUserStore()
+
+/**
+ * 提交表单
+ * @param values
+ */
+const handleSubmit = async (values: any) => {
+  const res = await userLogin(values)
+  // 登录成功，把登录态保存到全局状态中
+  if (res.data.code === 0 && res.data.data) {
+    await loginUserStore.fetchLoginUser()
+    message.success('登录成功')
+    router.push({
+      path: '/',
+      replace: true,
+    })
   } else {
-    message.error('获取数据失败，' + res.data.message)
+    message.error('登录失败，' + res.data.message)
   }
 }
-
-// 分页参数
-const pagination = computed(() => {
-  return {
-    current: searchParams.pageNum ?? 1,
-    pageSize: searchParams.pageSize ?? 10,
-    total: total.value,
-    showSizeChanger: true,
-    showTotal: (total: number) => `共 ${total} 条`,
-  }
-})
-
-// 表格分页变化时的操作
-const doTableChange = (page: any) => {
-  searchParams.pageNum = page.current
-  searchParams.pageSize = page.pageSize
-  fetchData()
-}
-
-const doSearch = () => {
-  // 重置页码
-  searchParams.pageNum = 1
-  fetchData()
-}
-
-// 删除数据
-const doDelete = async (id: string) => {
-  if (!id) {
-    return
-  }
-  const res = await deleteUser({ id })
-  if (res.data.code === 0) {
-    message.success('删除成功')
-    // 刷新数据
-    fetchData()
-  } else {
-    message.error('删除失败')
-  }
-}
-
-// 页面加载时请求一次
-onMounted(() => {
-  fetchData()
-})
 </script>
 
-<style>
-#userManagePage {
+<style scoped>
+#userLoginPage {
+  background: white;
+  max-width: 720px;
+  padding: 24px;
+  margin: 24px auto;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.desc {
+  text-align: center;
+  color: #bbb;
+  margin-bottom: 16px;
+}
+
+.tips {
+  text-align: right;
+  color: #bbb;
+  font-size: 13px;
+  margin-bottom: 16px;
 }
 </style>
