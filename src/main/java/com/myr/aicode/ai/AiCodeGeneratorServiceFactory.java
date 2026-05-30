@@ -42,6 +42,9 @@ public class AiCodeGeneratorServiceFactory {
     @Resource
     private ChatHistoryService chatHistoryService;
 
+    @Resource
+    private ToolManager toolManager;
+
     /**
      * AI 服务实例缓存
      * 缓存策略：
@@ -104,7 +107,7 @@ public class AiCodeGeneratorServiceFactory {
                     .chatModel(chatModel)
                     .streamingChatModel(reasoningStreamingChatModel)
                     .chatMemoryProvider(memoryId -> chatMemory)
-                    .tools(new FileWriteTool())
+                    .tools(toolManager.getAllTools())
                     // 处理工具调用幻觉问题
                     .hallucinatedToolNameStrategy(toolExecutionRequest ->
                             ToolExecutionResultMessage.from(toolExecutionRequest,
@@ -143,4 +146,3 @@ public class AiCodeGeneratorServiceFactory {
         return appId + "_" + codeGenType.getValue();
     }
 }
-
