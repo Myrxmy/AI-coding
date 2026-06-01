@@ -1,6 +1,7 @@
 package com.myr.aicode.langgraph4j.state;
 
 import com.myr.aicode.langgraph4j.model.ImageResource;
+import com.myr.aicode.langgraph4j.model.QualityResult;
 import com.myr.aicode.model.enums.CodeGenTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,6 +67,11 @@ public class WorkflowContext implements Serializable {
      * 构建成功的目录
      */
     private String buildResultDir;
+
+    /**
+     * 质量检查结果
+     */
+    private QualityResult qualityResult;
 
     /**
      * 错误信息
