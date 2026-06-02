@@ -13,7 +13,6 @@ import reactor.core.publisher.Flux;
 @Slf4j
 public class SimpleTextStreamHandler {
 
-
     /**
      * 处理传统流（HTML, MULTI_FILE）
      * 直接收集完整的文本响应

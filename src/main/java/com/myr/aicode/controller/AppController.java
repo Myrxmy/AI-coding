@@ -18,6 +18,8 @@ import com.myr.aicode.model.dto.app.*;
 import com.myr.aicode.model.entity.App;
 import com.myr.aicode.model.entity.User;
 import com.myr.aicode.model.vo.AppVO;
+import com.myr.aicode.ratelimter.annotation.RateLimit;
+import com.myr.aicode.ratelimter.enums.RateLimitType;
 import com.myr.aicode.service.AppService;
 import com.myr.aicode.service.ProjectDownloadService;
 import com.myr.aicode.service.UserService;
@@ -55,6 +57,7 @@ public class AppController {
     private ProjectDownloadService projectDownloadService;
 
     @GetMapping(value = "/chat/gen/code", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @RateLimit(limitType = RateLimitType.USER, rate = 5, rateInterval = 60, message = "AI 对话请求过于频繁，请稍后再试")
     public Flux<ServerSentEvent<String>> chatToGenCode(@RequestParam Long appId,
                                                        @RequestParam String message,
                                                        HttpServletRequest request) {
