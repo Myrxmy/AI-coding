@@ -2,11 +2,13 @@ package com.myr.aicode.ai;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.myr.aicode.ai.guardrail.PromptSafetyInputGuardrail;
 import com.myr.aicode.ai.tools.ToolManager;
 import com.myr.aicode.exception.BusinessException;
 import com.myr.aicode.exception.ErrorCode;
 import com.myr.aicode.model.enums.CodeGenTypeEnum;
 import com.myr.aicode.service.ChatHistoryService;
+import com.myr.aicode.utils.SpringContextUtil;
 import dev.langchain4j.community.store.memory.chat.redis.RedisChatMemoryStore;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -110,6 +112,7 @@ public class AiCodeGeneratorServiceFactory {
                                 ToolExecutionResultMessage.from(toolExecutionRequest,
                                         "Error: there is no tool called " + toolExecutionRequest.name())
                         )
+                        .inputGuardrails(new PromptSafetyInputGuardrail()) // 添加输入护轨
                         .build();
             }
             // HTML 和 多文件生成，使用流式对话模型
@@ -120,6 +123,7 @@ public class AiCodeGeneratorServiceFactory {
                         .chatModel(chatModel)
                         .streamingChatModel(openAiStreamingChatModel)
                         .chatMemory(chatMemory)
+                        .inputGuardrails(new PromptSafetyInputGuardrail()) // 添加输入护轨
                         .build();
             }
             default ->
